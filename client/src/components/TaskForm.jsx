@@ -47,10 +47,7 @@ const TaskForm = ({ currentTask, onSave, clearCurrent }) => {
       const today = new Date();
       today.setHours(0, 0, 0, 0); // Reset time to midnight for accurate day comparison
       
-      // Since html date input uses local timezone implicitly, we compare local dates
-      const selectedLocal = new Date(selectedDate.getTime() + selectedDate.getTimezoneOffset() * 60000);
-      
-      if (selectedLocal < today) {
+      if (selectedDate < today) {
         newErrors.dueDate = 'Due date cannot be in the past';
       }
     }
@@ -69,7 +66,10 @@ const TaskForm = ({ currentTask, onSave, clearCurrent }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validate()) {
-      onSave(formData);
+      onSave({
+        ...formData,
+        dueDate: new Date(formData.dueDate).toISOString()
+      });
     }
   };
 

@@ -19,7 +19,11 @@ const taskSchema = new mongoose.Schema({
             validator: function(v) {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0); // Remove time part for accurate comparison
-                return v >= today;
+                // Subtract 1 day to prevent timezone-related false validation errors
+                // where the server's UTC day is ahead of the user's local day.
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                return v >= yesterday;
             },
             message: 'Due date must be a current or future date'
         }
